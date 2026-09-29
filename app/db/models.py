@@ -1,7 +1,7 @@
 from datetime import UTC, date, datetime
 from enum import StrEnum
 
-from sqlalchemy import JSON, Column, UniqueConstraint
+from sqlalchemy import JSON, Column, Index, String, text
 from sqlmodel import Field, SQLModel
 
 
@@ -22,8 +22,17 @@ def _ahora() -> datetime:
 
 
 class Factura(SQLModel, table=True):
+    # Solo puede haber UNA factura registrada por (emisor, tipo, folio). Los duplicados sí
+    # pueden existir en revisión o rechazados, para que un humano los vea en la cola.
     __table_args__ = (
-        UniqueConstraint("rut_emisor", "tipo_dte", "folio", name="uq_factura_emisor_tipo_folio"),
+        Index(
+            "uq_factura_registrada",
+            "rut_emisor",
+            "tipo_dte",
+            "folio",
+            unique=True,
+            sqlite_where=text("estado = 'registrada'"),
+        ),
     )
 
     id: int | None = Field(default=None, primary_key=True)
@@ -37,7 +46,10 @@ class Factura(SQLModel, table=True):
     iva: int = 0
     exento: int = 0
     total: int
-    estado: EstadoFactura = Field(default=EstadoFactura.EN_REVISION)
+    # Se guarda como texto ('registrada', ...) para que el índice parcial funcione.
+    # Valores posibles: ver EstadoFactura.
+    estado: str = Field(default=EstadoFactura.EN_REVISION.value, sa_type=String(20))
+    fuente: str = "xml"
     creada_en: datetime = Field(default_factory=_ahora)
 
 
@@ -46,5 +58,8 @@ class Revision(SQLModel, table=True):
     factura_id: int = Field(foreign_key="factura.id", index=True)
     hallazgos: list[dict] = Field(default_factory=list, sa_column=Column(JSON))
     motivo: str = ""
-    decision: DecisionRevision = Field(default=DecisionRevision.PENDIENTE)
+    # Valores posibles: ver DecisionRevision.
+    decision: str = Field(default=DecisionRevision.PENDIENTE.value, sa_type=String(20))
+    comentario: str = ""
+    creada_en: datetime = Field(default_factory=_ahora)
     revisada_en: datetime | None = None

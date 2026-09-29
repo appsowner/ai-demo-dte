@@ -47,11 +47,18 @@ def test_crea_factura_y_revision(session: Session) -> None:
     session.commit()
     session.refresh(r)
     assert r.hallazgos[0]["codigo"] == "IVA"
+    assert r.decision == "pendiente"
 
 
-def test_duplicado_rechazado(session: Session) -> None:
-    session.add(_factura())
+def test_no_puede_haber_dos_registradas_iguales(session: Session) -> None:
+    session.add(_factura(estado=EstadoFactura.REGISTRADA))
     session.commit()
-    session.add(_factura())
+    session.add(_factura(estado=EstadoFactura.REGISTRADA))
     with pytest.raises(IntegrityError):
         session.commit()
+
+
+def test_duplicado_puede_quedar_en_revision(session: Session) -> None:
+    session.add(_factura(estado=EstadoFactura.REGISTRADA))
+    session.add(_factura(estado=EstadoFactura.EN_REVISION))
+    session.commit()  # no falla: el duplicado queda en la cola para que lo vea un humano

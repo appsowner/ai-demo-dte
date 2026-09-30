@@ -12,6 +12,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlmodel import Session, select
 
 from app.agent.procesar import ResultadoProcesamiento, procesar_documento
+from app.api.seguridad import verificar_api_key
 from app.db.models import DecisionRevision, EstadoFactura, Factura, Revision
 from app.db.repositorio import existe_factura
 from app.db.session import get_session
@@ -20,7 +21,8 @@ from app.extraction.schemas import ErrorExtraccion
 
 TAMANO_MAXIMO_BYTES = 5 * 1024 * 1024
 
-router = APIRouter()
+# Todos los endpoints de este router exigen API key cuando API_KEY_SHA256 está definida.
+router = APIRouter(dependencies=[Depends(verificar_api_key)])
 
 SessionDep = Annotated[Session, Depends(get_session)]
 

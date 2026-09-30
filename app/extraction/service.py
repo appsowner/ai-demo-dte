@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from pydantic import ValidationError
 
+from app.config import MAX_CARACTERES_DOCUMENTO
 from app.extraction.llm import VERSION_PROMPT, ClienteLLM
 from app.extraction.pdf_text import extraer_texto
 from app.extraction.schemas import ErrorExtraccion, FacturaExtraida, ResultadoExtraccion
@@ -32,6 +33,12 @@ def extraer_documento(
         raise ErrorExtraccion("Se necesita un cliente LLM para leer PDFs")
 
     texto = extraer_texto(contenido)
+    if len(texto) > MAX_CARACTERES_DOCUMENTO:
+        # Guardrail de costo: no se envía al LLM un documento anormalmente largo.
+        raise ErrorExtraccion(
+            f"El documento tiene {len(texto)} caracteres (máximo {MAX_CARACTERES_DOCUMENTO}); "
+            "no se procesa automáticamente."
+        )
     datos, uso = cliente_llm.extraer(texto)
     try:
         factura = FacturaExtraida.model_validate(datos)

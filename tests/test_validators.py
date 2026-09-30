@@ -131,8 +131,10 @@ def test_reglas_coinciden_con_los_20_casos():
 
 
 def test_codigos_cubren_la_pauta():
-    pauta = {c for caso in CASOS for c in caso.hallazgos} - {"POSIBLE_INYECCION"}
-    assert pauta == {c.value for c in Codigo}
+    pauta = {c for caso in CASOS for c in caso.hallazgos}
+    guardrails = {"POSIBLE_INYECCION", "COSTO_EXCEDIDO"}  # los emite app/guardrails
+    assert pauta <= {c.value for c in Codigo}
+    assert {c.value for c in Codigo} - guardrails == pauta - guardrails
 
 
 # --- duplicados en base de datos -------------------------------------------------------------

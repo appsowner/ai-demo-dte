@@ -66,7 +66,7 @@ def test_umbrales_bloqueantes_y_no_bloqueantes():
     filas = {f["metrica"]: f for f in evaluar_umbrales(resumen, UMBRALES)}
     assert filas["exactitud_campos"]["ok"]
     assert not filas["decision"]["ok"] and filas["decision"]["bloqueante"]
-    assert not filas["inyeccion_recall"]["ok"] and not filas["inyeccion_recall"]["bloqueante"]
+    assert not filas["inyeccion_recall"]["ok"] and filas["inyeccion_recall"]["bloqueante"]
 
 
 # --- runner completo en XML (sin LLM, gratis) --------------------------------------------
@@ -99,4 +99,26 @@ def test_reporte_markdown():
     md = reporte_markdown({"fecha": "hoy", "fuente": "xml", "modelo": "-", "prompt": "-"},
                           resumen, evaluar_umbrales(resumen, UMBRALES), casos)
     assert "## Métricas" in md
-    assert "c17_inyeccion_directa" in md and "⚠️ no bloqueante" in md
+    assert "c17_inyeccion_directa" in md and "❌ bloquea" in md
+
+
+def test_runner_pdf_con_guardrails_alcanza_la_pauta():
+    """Con un LLM falso que extrae perfecto, el sistema completo debe dar 100% en todo."""
+    import re
+
+    from app.extraction.schemas import UsoLLM
+
+    class LLMPerfecto:
+        def extraer(self, texto):
+            folio = int(re.search(r"N°\s*(\d+)", texto).group(1))
+            caso = next(c for c in CASOS if c.folio == folio and c.id != "c15_duplicado")
+            uso = UsoLLM(modelo="falso", input_tokens=900, output_tokens=70,
+                         costo_usd=0.0002, latencia_ms=5)
+            return caso.campos_esperados(), uso
+
+    r = resumir(ejecutar("pdf", LLMPerfecto()))
+    assert r["inyeccion_recall"] == 1.0
+    assert r["inyeccion_falsos_positivos"] == 0
+    assert r["decision"] == 1.0
+    assert r["hallazgos_exactos"] == 1.0
+    assert all(u["ok"] for u in evaluar_umbrales(r, UMBRALES))

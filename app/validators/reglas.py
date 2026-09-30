@@ -1,8 +1,8 @@
 """Reglas tributarias determinísticas. Sin LLM: exactas, testeables y auditables.
 
 Cada regla devuelve hallazgos con un código estable, que usan el agente (tarjeta 5)
-y las evals (tarjeta 7). POSIBLE_INYECCION no está aquí: lo detecta el guardrail
-de la tarjeta 8.
+y las evals (tarjeta 7). POSIBLE_INYECCION y COSTO_EXCEDIDO los emiten los guardrails
+(app/guardrails), no estas reglas.
 """
 
 from __future__ import annotations
@@ -27,6 +27,9 @@ class Codigo(StrEnum):
     DUPLICADO = "DUPLICADO"
     FECHA_FUTURA = "FECHA_FUTURA"
     MONTO_ALTO = "MONTO_ALTO"
+    # Guardrails (app/guardrails)
+    POSIBLE_INYECCION = "POSIBLE_INYECCION"
+    COSTO_EXCEDIDO = "COSTO_EXCEDIDO"
 
 
 class Severidad(StrEnum):

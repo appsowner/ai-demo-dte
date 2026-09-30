@@ -1,0 +1,41 @@
+# Despliegue en Dokploy (servicio tipo Compose, desde el repo de GitHub).
+# Las variables ${...} se configuran en la pestaña Environment de Dokploy.
+# Los dominios se configuran en Dokploy: api → puerto 8000, mcp → puerto 8001.
+
+services:
+  api:
+    build: .
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: sqlite:////data/facturas.db
+      API_KEY_SHA256: ${API_KEY_SHA256}
+      LLM_PROVIDER: ${LLM_PROVIDER:-openrouter}
+      LLM_MODEL: ${LLM_MODEL:-openai/gpt-4o-mini}
+      OPENROUTER_API_KEY: ${OPENROUTER_API_KEY}
+    volumes:
+      - dte_data:/data
+    networks:
+      - default
+      - dokploy-network
+
+  mcp:
+    build: .
+    restart: unless-stopped
+    command: ["python", "-m", "mcp_server.http_server", "--host", "0.0.0.0", "--port", "8001"]
+    environment:
+      DATABASE_URL: sqlite:////data/facturas.db
+      MCP_TOKEN_SHA256: ${MCP_TOKEN_SHA256}
+    volumes:
+      - dte_data:/data
+    depends_on:
+      - api
+    networks:
+      - default
+      - dokploy-network
+
+volumes:
+  dte_data:
+
+networks:
+  dokploy-network:
+    external: true

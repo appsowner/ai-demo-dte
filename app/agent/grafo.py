@@ -1,7 +1,9 @@
 """Grafo del agente con LangGraph.
 
-    START → extraer → validar → decidir ─┬─ registrar → END
-                                         └─ escalar   → END   (cola de revisión humana)
+    START → extraer → seguridad → validar → decidir ─┬─ registrar → END
+                                                     └─ escalar   → END   (revisión humana)
+
+"seguridad" corre los guardrails (prompt injection y costo) antes de las reglas.
 
 La revisión humana es asíncrona: la factura queda en la tabla Revision con estado
 "pendiente" hasta que una persona la aprueba o rechaza desde la API. Así la cola
@@ -22,12 +24,15 @@ from app.db.repositorio import existe_factura
 from app.extraction.llm import ClienteLLM
 from app.extraction.schemas import ResultadoExtraccion
 from app.extraction.service import extraer_documento
+from app.guardrails.costo import revisar_costo
+from app.guardrails.inyeccion import detectar_inyeccion
 from app.validators.reglas import Hallazgo, validar
 
 
 class EstadoAgente(TypedDict, total=False):
     contenido: bytes
     extraccion: ResultadoExtraccion
+    hallazgos_seguridad: list[Hallazgo]
     hallazgos: list[Hallazgo]
     decision: Decision
     motivo: str
@@ -39,10 +44,17 @@ def construir_grafo(session: Session, cliente_llm: ClienteLLM | None, hoy: date)
     def nodo_extraer(estado: EstadoAgente) -> EstadoAgente:
         return {"extraccion": extraer_documento(estado["contenido"], cliente_llm)}
 
+    def nodo_seguridad(estado: EstadoAgente) -> EstadoAgente:
+        ext = estado["extraccion"]
+        # PDF: texto extraído. XML: el propio XML (un atacante también podría escribir ahí).
+        texto = ext.texto_documento or estado["contenido"].decode("latin-1", errors="ignore")
+        return {"hallazgos_seguridad": detectar_inyeccion(texto) + revisar_costo(ext.uso)}
+
     def nodo_validar(estado: EstadoAgente) -> EstadoAgente:
         f = estado["extraccion"].factura
         duplicado = existe_factura(session, f.rut_emisor, f.tipo_dte, f.folio)
-        return {"hallazgos": validar(f, hoy=hoy, es_duplicado=duplicado)}
+        reglas = validar(f, hoy=hoy, es_duplicado=duplicado)
+        return {"hallazgos": estado.get("hallazgos_seguridad", []) + reglas}
 
     def nodo_decidir(estado: EstadoAgente) -> EstadoAgente:
         hallazgos = estado["hallazgos"]
@@ -73,13 +85,15 @@ def construir_grafo(session: Session, cliente_llm: ClienteLLM | None, hoy: date)
 
     g = StateGraph(EstadoAgente)
     g.add_node("extraer", nodo_extraer)
+    g.add_node("seguridad", nodo_seguridad)
     g.add_node("validar", nodo_validar)
     g.add_node("decidir", nodo_decidir)
     g.add_node("registrar", nodo_registrar)
     g.add_node("escalar", nodo_escalar)
 
     g.add_edge(START, "extraer")
-    g.add_edge("extraer", "validar")
+    g.add_edge("extraer", "seguridad")
+    g.add_edge("seguridad", "validar")
     g.add_edge("validar", "decidir")
     g.add_conditional_edges(
         "decidir", lambda e: e["decision"], {"registrar": "registrar", "escalar": "escalar"}

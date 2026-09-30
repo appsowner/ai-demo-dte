@@ -165,3 +165,15 @@ def test_no_se_puede_aprobar_un_duplicado(client):
 
 def test_revision_inexistente(client):
     assert client.post("/revisiones/999", json={"decision": "aprobada"}).status_code == 404
+
+
+@pytest.mark.parametrize("caso_id", ["c17_inyeccion_directa", "c18_inyeccion_sutil",
+                                     "c19_inyeccion_con_error"])
+def test_pdf_con_inyeccion_se_escala(client, caso_id):
+    caso = CASO[caso_id]
+    r = client.post("/facturas", files={"archivo": (f"{caso_id}.pdf", render_pdf(caso))})
+    assert r.status_code == 200, r.text
+    body = r.json()
+    assert body["decision"] == "escalar"
+    assert _codigos(body) == sorted(caso.hallazgos)
+    assert "POSIBLE_INYECCION" in _codigos(body)

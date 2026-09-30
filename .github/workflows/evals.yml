@@ -1,0 +1,37 @@
+name: Evals
+
+# Corre las evals con el LLM real. Se lanza a mano (pestaña Actions → Evals → Run workflow)
+# para no gastar crédito en cada PR. Requiere el secret OPENROUTER_API_KEY en el repo.
+on:
+  workflow_dispatch:
+    inputs:
+      modelo:
+        description: "Modelo de OpenRouter"
+        required: false
+        default: "openai/gpt-4o-mini"
+
+jobs:
+  evals:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+      - name: Instalar dependencias
+        run: uv sync
+      - name: Correr evals
+        env:
+          LLM_PROVIDER: openrouter
+          LLM_MODEL: ${{ inputs.modelo }}
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+        run: uv run python -m evals.run --fuente pdf
+      - name: Publicar reporte en el resumen del job
+        if: always()
+        run: cat evals/reports/*.md >> "$GITHUB_STEP_SUMMARY" || true
+      - name: Guardar reportes
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: reporte-evals
+          path: evals/reports/

@@ -1,0 +1,118 @@
+{
+  "name": "Ingesta de facturas DTE (formulario)",
+  "nodes": [
+    {
+      "parameters": {
+        "jsCode": "const salida = [];\nfor (const item of $input.all()) {\n  for (const bin of Object.values(item.binary ?? {})) {\n    const nombre = (bin.fileName || '').toLowerCase();\n    if (nombre.endsWith('.pdf') || nombre.endsWith('.xml')) {\n      salida.push({\n        json: {\n          remitente: item.json.from,\n          asunto: item.json.subject,\n          archivo: bin.fileName,\n        },\n        binary: { archivo: bin },\n      });\n    }\n  }\n}\nreturn salida;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -560,
+        0
+      ],
+      "id": "604f887a-cc65-424a-a339-fe3ab2f5f710",
+      "name": "Filtrar XML/PDF"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api-dte.studioai.cl/facturas",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "parameterType": "formBinaryData",
+              "name": "archivo",
+              "inputDataFieldName": "archivo"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 60000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        -288,
+        0
+      ],
+      "id": "e081956e-d944-4526-aae7-93ea359d94b8",
+      "name": "HTTP Request",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "mhpIphnvbLI33Q5W",
+          "name": "Header Auth account"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "formTitle": "Sube tu factura DTE",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "archivo",
+              "fieldType": "file",
+              "acceptFileTypes": ".xml,.pdf",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.6,
+      "position": [
+        -848,
+        0
+      ],
+      "id": "a31752b2-e98b-4bd0-9cbf-5d298d9f2749",
+      "name": "On form submission",
+      "webhookId": "f05202a1-850f-4733-9720-150c633617cd"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Filtrar XML/PDF",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filtrar XML/PDF": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "171cb4c6-9eb6-41e7-8cfd-2a44cd818df1",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "183f2370de8988f2e82b155e4411b04e5d8632a115ab667e36cbe73936e9fb2d"
+  },
+  "nodeGroups": [],
+  "id": "SUIuCdrTJZOjkiOs",
+  "tags": []
+}

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!-- DOCUMENTO DE PRUEBA - SIN VALIDEZ TRIBUTARIA. Datos ficticios. -->
+<DTE version="1.0">
+  <Documento ID="T33F3001">
+    <Encabezado>
+      <IdDoc>
+        <TipoDTE>33</TipoDTE>
+        <Folio>3001</Folio>
+        <FchEmis>2026-09-18</FchEmis>
+      </IdDoc>
+      <Emisor>
+        <RUTEmisor>76900010-0</RUTEmisor>
+        <RznSoc>Ferreteria Los Aromos Ficticia Ltda.</RznSoc>
+        <GiroEmis>Venta de articulos de ferreteria</GiroEmis>
+        <DirOrigen>Calle Uno 123</DirOrigen>
+        <CmnaOrigen>Valparaiso</CmnaOrigen>
+      </Emisor>
+      <Receptor>
+        <RUTRecep>76900001-1</RUTRecep>
+        <RznSocRecep>Empresa Demo Receptora SpA</RznSocRecep>
+        <GiroRecep>Servicios informaticos</GiroRecep>
+        <DirRecep>Av. Ficticia 100</DirRecep>
+        <CmnaRecep>Vina del Mar</CmnaRecep>
+      </Receptor>
+      <Totales>
+        <MntNeto>84990</MntNeto>
+        <TasaIVA>19</TasaIVA>
+        <IVA>16148</IVA>
+        <MntTotal>101138</MntTotal>
+      </Totales>
+    </Encabezado>
+    <Detalle>
+      <NroLinDet>1</NroLinDet>
+      <NmbItem>Taladro inalambrico 18V</NmbItem>
+      <QtyItem>1</QtyItem>
+      <PrcItem>84990</PrcItem>
+      <MontoItem>84990</MontoItem>
+    </Detalle>
+  </Documento>
+</DTE>

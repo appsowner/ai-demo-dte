@@ -4,8 +4,8 @@ Publica dos servicios desde este repo, compartiendo la misma base SQLite (volume
 
 | Servicio | Puerto | Dominio sugerido | Protección |
 |---|---|---|---|
-| `api` (FastAPI + agente) | 8000 | `api-dte.appsowner.com` | Header `X-API-Key` |
-| `mcp` (MCP por HTTP, solo lectura) | 8001 | `mcp-dte.appsowner.com` | Header `Authorization: Bearer <token>` |
+| `api` (FastAPI + agente) | 8000 | `api-dte.studioai.cl` | Header `X-API-Key` |
+| `mcp` (MCP por HTTP, solo lectura) | 8001 | `mcp-dte.studioai.cl` | Header `Authorization: Bearer <token>` |
 
 ## 1. Generar secretos (en tu Mac)
 
@@ -29,8 +29,8 @@ Guarda la **API key** y el **token MCP** en tu gestor de contraseñas. En el ser
    LLM_MODEL=openai/gpt-4o-mini
    ```
 4. **Domains:**
-   - `api-dte.appsowner.com` → servicio `api`, puerto `8000`, HTTPS.
-   - `mcp-dte.appsowner.com` → servicio `mcp`, puerto `8001`, HTTPS.
+   - `api-dte.studioai.cl` → servicio `api`, puerto `8000`, HTTPS.
+   - `mcp-dte.studioai.cl` → servicio `mcp`, puerto `8001`, HTTPS.
    (Antes crea los registros DNS tipo A apuntando a la IP del VPS.)
 5. **Deploy.**
 
@@ -45,13 +45,13 @@ python -m samples.cargar --reset
 ## 4. Verificar
 
 ```bash
-curl https://api-dte.appsowner.com/health                                  # {"status":"ok"}
-curl https://api-dte.appsowner.com/facturas                                # 401
-curl -H "X-API-Key: <tu key>" https://api-dte.appsowner.com/facturas       # 200
-curl https://mcp-dte.appsowner.com/mcp                                     # 401
+curl https://api-dte.studioai.cl/health                                  # {"status":"ok"}
+curl https://api-dte.studioai.cl/facturas                                # 401
+curl -H "X-API-Key: <tu key>" https://api-dte.studioai.cl/facturas       # 200
+curl https://mcp-dte.studioai.cl/mcp                                     # 401
 ```
 
-En `https://api-dte.appsowner.com/docs`, botón **Authorize** → pega la API key → ya puedes probar los endpoints.
+En `https://api-dte.studioai.cl/docs`, botón **Authorize** → pega la API key → ya puedes probar los endpoints.
 
 ## Notas
 

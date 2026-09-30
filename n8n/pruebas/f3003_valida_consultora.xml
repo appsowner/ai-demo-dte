@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!-- DOCUMENTO DE PRUEBA - SIN VALIDEZ TRIBUTARIA. Datos ficticios. -->
+<DTE version="1.0">
+  <Documento ID="T33F3003">
+    <Encabezado>
+      <IdDoc>
+        <TipoDTE>33</TipoDTE>
+        <Folio>3003</Folio>
+        <FchEmis>2026-09-25</FchEmis>
+      </IdDoc>
+      <Emisor>
+        <RUTEmisor>76900043-7</RUTEmisor>
+        <RznSoc>Consultora Andina Demo Ltda.</RznSoc>
+        <GiroEmis>Asesorias en gestion</GiroEmis>
+        <DirOrigen>Calle Uno 123</DirOrigen>
+        <CmnaOrigen>Valparaiso</CmnaOrigen>
+      </Emisor>
+      <Receptor>
+        <RUTRecep>76900001-1</RUTRecep>
+        <RznSocRecep>Empresa Demo Receptora SpA</RznSocRecep>
+        <GiroRecep>Servicios informaticos</GiroRecep>
+        <DirRecep>Av. Ficticia 100</DirRecep>
+        <CmnaRecep>Vina del Mar</CmnaRecep>
+      </Receptor>
+      <Totales>
+        <MntNeto>250000</MntNeto>
+        <TasaIVA>19</TasaIVA>
+        <IVA>47500</IVA>
+        <MntTotal>297500</MntTotal>
+      </Totales>
+    </Encabezado>
+    <Detalle>
+      <NroLinDet>1</NroLinDet>
+      <NmbItem>Asesoria mensual septiembre</NmbItem>
+      <QtyItem>1</QtyItem>
+      <PrcItem>250000</PrcItem>
+      <MontoItem>250000</MontoItem>
+    </Detalle>
+  </Documento>
+</DTE>

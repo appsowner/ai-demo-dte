@@ -20,6 +20,7 @@ from pathlib import Path
 from sqlalchemy.pool import StaticPool
 from sqlmodel import Session, SQLModel, create_engine
 
+from app import observabilidad as obs
 from app.agent.procesar import procesar_documento
 from app.extraction.llm import VERSION_PROMPT, ClienteLLM
 from app.extraction.schemas import ErrorExtraccion
@@ -53,7 +54,11 @@ def ejecutar(
             esperado = caso.esperado()
             try:
                 r = procesar_documento(
-                    render(caso), session=session, cliente_llm=cliente_llm, hoy=hoy
+                    render(caso),
+                    session=session,
+                    cliente_llm=cliente_llm,
+                    hoy=hoy,
+                    metadata={"origen": "evals", "caso": caso.id, "fuente": fuente},
                 )
             except ErrorExtraccion as e:
                 session.rollback()
@@ -80,9 +85,14 @@ def ejecutar(
                     output_tokens=uso.output_tokens if uso else 0,
                     latencia_ms=uso.latencia_ms if uso else 0,
                 )
-            if casos_ids is None or caso.id in casos_ids:
+            if casos_ids is None or coincide(caso.id, casos_ids):
                 resultados.append(res)
     return resultados
+
+
+def coincide(caso_id: str, pedidos: list[str]) -> bool:
+    """"c10" coincide con "c10_iva_incorrecto": basta el prefijo del caso."""
+    return any(caso_id == p or caso_id.startswith(f"{p}_") for p in pedidos)
 
 
 def _pct(valor: float) -> str:
@@ -163,7 +173,15 @@ def main() -> None:
             raise SystemExit(f"ERROR: {e}") from e
 
     ids = [x.strip() for x in args.casos.split(",")] if args.casos else None
-    casos = ejecutar(args.fuente, cliente, ids)
+    if ids:
+        desconocidos = [i for i in ids if not any(coincide(c.id, [i]) for c in CASOS)]
+        if desconocidos:
+            validos = ", ".join(c.id for c in CASOS)
+            raise SystemExit(f"Casos desconocidos: {', '.join(desconocidos)}\nVálidos: {validos}")
+    try:
+        casos = ejecutar(args.fuente, cliente, ids)
+    finally:
+        obs.flush()  # si hay trazas activas, se envían antes de salir
     errores = {c.error for c in casos if c.error}
     if casos and len(errores) == 1 and all(c.error for c in casos):
         # Un mismo error en todos los casos es de configuración (key, crédito, red), no de

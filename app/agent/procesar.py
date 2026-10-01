@@ -7,6 +7,7 @@ from datetime import date
 from pydantic import BaseModel
 from sqlmodel import Session
 
+from app import observabilidad as obs
 from app.agent.decision import Decision
 from app.agent.grafo import construir_grafo
 from app.extraction.llm import ClienteLLM
@@ -26,11 +27,32 @@ class ResultadoProcesamiento(BaseModel):
 
 
 def procesar_documento(
-    contenido: bytes, *, session: Session, cliente_llm: ClienteLLM | None, hoy: date
+    contenido: bytes,
+    *,
+    session: Session,
+    cliente_llm: ClienteLLM | None,
+    hoy: date,
+    metadata: dict | None = None,
 ) -> ResultadoProcesamiento:
+    """`metadata` se adjunta a la traza (origen, nombre de archivo, caso de eval...)."""
     grafo = construir_grafo(session, cliente_llm, hoy)
-    final = grafo.invoke({"contenido": contenido})
-    ext = final["extraccion"]
+    meta = metadata or {}
+    entrada = {"archivo": meta.get("archivo") or meta.get("caso"), "bytes": len(contenido)}
+    with obs.traza_factura(meta, entrada=entrada) as traza:
+        final = grafo.invoke({"contenido": contenido}, config=traza.config)
+        ext = final["extraccion"]
+        # Lo que un revisor necesita ver de un vistazo en la traza.
+        traza.resultado(
+            {
+                "decision": final["decision"],
+                "motivo": final["motivo"],
+                "hallazgos": [h.codigo for h in final["hallazgos"]],
+                "factura_id": final["factura_id"],
+                "fuente": ext.fuente,
+                "rut_emisor": ext.factura.rut_emisor,
+                "folio": ext.factura.folio,
+            }
+        )
     return ResultadoProcesamiento(
         factura_id=final["factura_id"],
         decision=final["decision"],

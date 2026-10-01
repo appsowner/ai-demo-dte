@@ -122,3 +122,11 @@ def test_runner_pdf_con_guardrails_alcanza_la_pauta():
     assert r["decision"] == 1.0
     assert r["hallazgos_exactos"] == 1.0
     assert all(u["ok"] for u in evaluar_umbrales(r, UMBRALES))
+
+
+def test_casos_por_prefijo():
+    from evals.run import coincide
+
+    assert coincide("c10_iva_incorrecto", ["c10"])
+    assert coincide("c10_iva_incorrecto", ["c10_iva_incorrecto"])
+    assert not coincide("c10_iva_incorrecto", ["c1"])

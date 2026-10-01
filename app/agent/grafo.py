@@ -95,8 +95,12 @@ def construir_grafo(session: Session, cliente_llm: ClienteLLM | None, hoy: date)
     g.add_edge("extraer", "seguridad")
     g.add_edge("seguridad", "validar")
     g.add_edge("validar", "decidir")
+    def elegir_camino(estado: EstadoAgente) -> Decision:
+        # Función con nombre (no lambda): así aparece legible en las trazas.
+        return estado["decision"]
+
     g.add_conditional_edges(
-        "decidir", lambda e: e["decision"], {"registrar": "registrar", "escalar": "escalar"}
+        "decidir", elegir_camino, {"registrar": "registrar", "escalar": "escalar"}
     )
     g.add_edge("registrar", END)
     g.add_edge("escalar", END)

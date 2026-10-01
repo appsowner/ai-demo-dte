@@ -177,9 +177,14 @@ class ClienteAnthropic:
 
 
 def crear_cliente(proveedor: str | None = None) -> ClienteLLM:
+    from app.observabilidad import ClienteObservado  # import tardío: evita ciclo
+
     proveedor = (proveedor or os.getenv("LLM_PROVIDER") or "openrouter").lower()
     if proveedor == "openrouter":
-        return ClienteOpenRouter()
-    if proveedor == "anthropic":
-        return ClienteAnthropic()
-    raise ErrorExtraccion(f"LLM_PROVIDER desconocido: {proveedor}")
+        cliente: ClienteLLM = ClienteOpenRouter()
+    elif proveedor == "anthropic":
+        cliente = ClienteAnthropic()
+    else:
+        raise ErrorExtraccion(f"LLM_PROVIDER desconocido: {proveedor}")
+    # Sin OBS_PROVIDER el envoltorio solo delega: mismo comportamiento que antes.
+    return ClienteObservado(cliente, proveedor)

@@ -12,6 +12,15 @@ services:
       LLM_PROVIDER: ${LLM_PROVIDER:-openrouter}
       LLM_MODEL: ${LLM_MODEL:-openai/gpt-4o-mini}
       OPENROUTER_API_KEY: ${OPENROUTER_API_KEY}
+      # Observabilidad (docs/observabilidad.md). Sin OBS_PROVIDER no se traza nada.
+      OBS_PROVIDER: ${OBS_PROVIDER:-none}
+      OBS_OCULTAR_CONTENIDO: ${OBS_OCULTAR_CONTENIDO:-false}
+      LANGFUSE_PUBLIC_KEY: ${LANGFUSE_PUBLIC_KEY:-}
+      LANGFUSE_SECRET_KEY: ${LANGFUSE_SECRET_KEY:-}
+      LANGFUSE_BASE_URL: ${LANGFUSE_BASE_URL:-https://cloud.langfuse.com}
+      LANGFUSE_TRACING_ENVIRONMENT: ${LANGFUSE_TRACING_ENVIRONMENT:-production}
+      LANGSMITH_API_KEY: ${LANGSMITH_API_KEY:-}
+      LANGSMITH_PROJECT: ${LANGSMITH_PROJECT:-ai-demo-dte}
     volumes:
       - dte_data:/data
     networks:

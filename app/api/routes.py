@@ -59,7 +59,13 @@ def subir_factura(
     if len(contenido) > TAMANO_MAXIMO_BYTES:
         raise HTTPException(413, "El archivo supera 5 MB")
     try:
-        return procesar_documento(contenido, session=session, cliente_llm=cliente_llm, hoy=hoy)
+        return procesar_documento(
+            contenido,
+            session=session,
+            cliente_llm=cliente_llm,
+            hoy=hoy,
+            metadata={"origen": "api", "archivo": archivo.filename},
+        )
     except ErrorExtraccion as e:
         session.rollback()
         raise HTTPException(422, str(e)) from e

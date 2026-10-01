@@ -10,3 +10,6 @@ __pycache__/
 
 # Reportes de evals (se generan en cada corrida)
 evals/reports/
+
+# Skills de agentes instaladas con `npx skills` (se reinstalan desde skills-lock.json)
+.agents/

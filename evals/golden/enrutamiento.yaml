@@ -1,0 +1,43 @@
+# Golden set del supervisor (fase 2, tarjeta 13): ¿a qué agente va cada mensaje?
+#
+#   facturas          → preguntas sobre LAS facturas de la empresa (agente de consultas:
+#                       buscar_facturas, resumen_proveedor, iva_credito_mes, revisiones_pendientes)
+#   normativa         → dudas tributarias generales (agente RAG)
+#   fuera_de_alcance  → nada que ver con facturas ni con IVA/DTE
+#   aclarar           → ambiguo: el supervisor debe preguntar en vez de adivinar
+#
+# Meta: ≥ 95% de mensajes enrutados al destino correcto.
+
+- {id: r01, mensaje: "¿Por qué escalaron la factura folio 4001?", destino: facturas}
+- {id: r02, mensaje: "¿Cuánto IVA crédito tengo en septiembre?", destino: facturas}
+- {id: r03, mensaje: "¿Qué facturas están pendientes de revisión?", destino: facturas}
+- {id: r04, mensaje: "Muéstrame las facturas de Papelería Central Demo SpA", destino: facturas}
+- {id: r05, mensaje: "¿Cuánto le hemos comprado a la Ferretería Los Aromos este mes?", destino: facturas}
+- {id: r06, mensaje: "¿Hay alguna factura del RUT 76900035-6 con problemas?", destino: facturas}
+- {id: r07, mensaje: "¿Cuántas facturas registramos esta semana?", destino: facturas}
+- {id: r08, mensaje: "¿Qué factura tiene el monto más alto?", destino: facturas}
+- {id: r09, mensaje: "¿Por qué la factura de Transportes Rápidos quedó en revisión?", destino: facturas}
+- {id: r10, mensaje: "Dame el total neto de las compras de septiembre", destino: facturas}
+- {id: r11, mensaje: "¿Qué facturas fueron escaladas por IVA incorrecto?", destino: facturas}
+- {id: r12, mensaje: "¿El folio 3002 ya se aprobó?", destino: facturas}
+
+- {id: r13, mensaje: "¿En qué plazo puedo reclamar una factura?", destino: normativa}
+- {id: r14, mensaje: "¿Cómo anulo una factura que emití con error?", destino: normativa}
+- {id: r15, mensaje: "¿Cuál es la tasa del IVA?", destino: normativa}
+- {id: r16, mensaje: "¿Qué pasa si no doy acuse de recibo a una factura?", destino: normativa}
+- {id: r17, mensaje: "¿Hasta cuándo puedo usar el crédito de una factura que llegó atrasada?", destino: normativa}
+- {id: r18, mensaje: "¿Qué es el Registro de Compras y Ventas?", destino: normativa}
+- {id: r19, mensaje: "¿Cuándo corresponde emitir una nota de débito?", destino: normativa}
+- {id: r20, mensaje: "¿Puedo ceder a factoring una factura reclamada?", destino: normativa}
+- {id: r21, mensaje: "Una factura reclamada, ¿da derecho a crédito fiscal?", destino: normativa}
+- {id: r22, mensaje: "¿Una nota de crédito puede anular varias facturas a la vez?", destino: normativa}
+
+- {id: r23, mensaje: "¿Cómo hago la declaración de renta de la empresa?", destino: fuera_de_alcance}
+- {id: r24, mensaje: "¿Qué tiempo va a hacer mañana en Santiago?", destino: fuera_de_alcance}
+- {id: r25, mensaje: "Escríbeme un correo para pedir vacaciones", destino: fuera_de_alcance}
+- {id: r26, mensaje: "¿Cómo calculo el sueldo líquido de un trabajador?", destino: fuera_de_alcance}
+
+- {id: r27, mensaje: "¿Esta factura me sirve?", destino: aclarar}
+- {id: r28, mensaje: "Revisa lo de ayer", destino: aclarar}
+- {id: r29, mensaje: "¿Y la de la ferretería?", destino: aclarar}
+- {id: r30, mensaje: "¿Está bien?", destino: aclarar}

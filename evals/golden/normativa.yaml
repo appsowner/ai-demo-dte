@@ -1,0 +1,258 @@
+# Golden set del agente de normativa (fase 2, tarjeta 13).
+#
+# Escenario: Marcela, encargada de finanzas de una pyme, pregunta con sus palabras
+# (no con las de la ley: si la pregunta copia el texto del documento, la búsqueda parece
+# mejor de lo que es).
+#
+# Campos:
+#   documentos_esperados: ids de normativa/docs que contienen la respuesta (basta con
+#                         recuperar uno de ellos en el top-5 → recall@5).
+#   hechos_clave:         lo que la respuesta DEBE decir. Cada elemento es una lista de
+#                         alternativas equivalentes ("8 días" u "ocho días"): debe aparecer
+#                         al menos una. Comparación sin mayúsculas ni tildes.
+#   tipo:                 normal | fuera_del_corpus (respuesta correcta: decir que no sabe).
+#   verificado_en:        dónde se comprobó el hecho (para revisar la pauta, no para el agente).
+#
+# Cada hecho fue verificado contra el texto descargado, no contra la memoria.
+
+- id: n01
+  pregunta: "Me llegó una factura de un proveedor y no la pagué al contado. ¿Qué tengo que hacer para poder usar el IVA como crédito?"
+  documentos_esperados: [sii-uso-credito-fiscal, sii-faq-fe-6597, sii-faq-fe-6603]
+  hechos_clave: [["acuse de recibo"]]
+  tipo: normal
+  verificado_en: "sii-uso-credito-fiscal: 'las facturas que dan derecho a utilizar el crédito fiscal, son aquellas que tienen Acuse de Recibo'"
+
+- id: n02
+  pregunta: "Si no acepto ni reclamo una factura, ¿qué pasa después?"
+  documentos_esperados: [sii-uso-credito-fiscal, sii-faq-fe-6597, sii-faq-fe-6976]
+  hechos_clave: [["8 días", "ocho días"], ["automátic"]]
+  tipo: normal
+  verificado_en: "sii-uso-credito-fiscal: 'se da automáticamente al cabo de los 8 días corridos desde que la factura es recepcionada por el SII'"
+
+- id: n03
+  pregunta: "¿Cuántos días tengo para reclamar una factura que me llegó mal?"
+  documentos_esperados: [ley-19983, sii-uso-credito-fiscal, sii-faq-fe-6603]
+  hechos_clave: [["8 días", "ocho días"]]
+  tipo: normal
+  verificado_en: "ley-19983 art. 3: 'dentro de los ocho días corridos siguientes a su recepción'"
+
+- id: n04
+  pregunta: "Una factura entró al SII el 28 de septiembre. ¿En qué mes queda con acuse de recibo automático?"
+  documentos_esperados: [sii-uso-credito-fiscal]
+  hechos_clave: [["mes siguiente", "octubre"]]
+  tipo: normal
+  verificado_en: "sii-uso-credito-fiscal: 'facturas recibidas en el SII los últimos 8 días del mes, tendrán su acuse de recibo automático al mes siguiente'"
+
+- id: n05
+  pregunta: "Reclamé una factura porque el monto venía malo. ¿Puedo usar igual su IVA crédito?"
+  documentos_esperados: [sii-uso-credito-fiscal, sii-faq-fe-6915, sii-faq-fe-6295]
+  hechos_clave: [["no da derecho", "no podrá hacer uso", "no tiene derecho"], ["crédito fiscal"]]
+  tipo: normal
+  verificado_en: "sii-faq-fe-6915: 'el receptor no podrá hacer uso del crédito fiscal contenido en la factura electrónica'"
+
+- id: n06
+  pregunta: "Reclamé una factura por error. ¿La puedo aceptar después?"
+  documentos_esperados: [sii-faq-fe-6295]
+  hechos_clave: [["no se puede cambiar", "no puede cambiar", "solo considera la primera"]]
+  tipo: normal
+  verificado_en: "sii-faq-fe-6295: 'posteriormente no se puede cambiar de estado a Aceptada'"
+
+- id: n07
+  pregunta: "¿Qué opciones tengo en el SII para aceptar o rechazar una factura que recibí?"
+  documentos_esperados: [sii-uso-credito-fiscal]
+  hechos_clave: [["acuse de recibo"], ["reclamo"]]
+  tipo: normal
+  verificado_en: "sii-uso-credito-fiscal: 5 alternativas (acuse de recibo, reclamo al contenido, falta parcial, falta total, acepta contenido)"
+
+- id: n08
+  pregunta: "Mi cliente reclamó una factura que le emití. ¿Igual la puedo pasar a factoring?"
+  documentos_esperados: [sii-faq-fe-6915]
+  hechos_clave: [["rechazará", "no se podrá ceder", "no podrá ceder"], ["cesión", "ceder"]]
+  tipo: normal
+  verificado_en: "sii-faq-fe-6915: 'el Registro Público Electrónico de Transferencia de Créditos rechazará las anotaciones de cesión electrónica que se efectúen con posterioridad al reclamo'"
+
+- id: n09
+  pregunta: "Me llegó atrasada una factura emitida en agosto. ¿Hasta cuándo puedo usar ese crédito fiscal?"
+  documentos_esperados: [sii-faq-impuestos-mensuales-0693, dl825-ley-iva]
+  hechos_clave: [["dos períodos", "2 períodos"], ["octubre"]]
+  tipo: normal
+  verificado_en: "sii-faq-impuestos-mensuales-0693: 'dentro de los dos períodos tributarios siguientes ... Agosto ... hasta Octubre'"
+
+- id: n10
+  pregunta: "¿Cuál es la tasa del IVA en Chile?"
+  documentos_esperados: [dl825-ley-iva]
+  hechos_clave: [["19%", "19 %", "diecinueve"]]
+  tipo: normal
+  verificado_en: "dl825-ley-iva art. 14: 'pagarán el impuesto con una tasa de 19% sobre la base imponible'"
+
+- id: n11
+  pregunta: "¿Qué compras me dan derecho a usar el IVA como crédito fiscal?"
+  documentos_esperados: [dl825-ley-iva]
+  hechos_clave: [["giro", "actividad"]]
+  tipo: normal
+  verificado_en: "dl825-ley-iva art. 23 N°1: 'gastos de tipo general, que digan relación con el giro o actividad del contribuyente'"
+
+- id: n12
+  pregunta: "Vendo productos. ¿En qué momento tengo que emitir la factura?"
+  documentos_esperados: [dl825-ley-iva]
+  hechos_clave: [["mismo momento"], ["entrega"]]
+  tipo: normal
+  verificado_en: "dl825-ley-iva art. 55: 'las facturas deberán ser emitidas en el mismo momento en que se efectúe la entrega real o simbólica'"
+
+- id: n13
+  pregunta: "Presto servicios de asesoría. ¿Cuándo debo emitir la factura?"
+  documentos_esperados: [dl825-ley-iva]
+  hechos_clave: [["mismo período tributario", "mismo periodo tributario"], ["remuneración", "pago", "perciba"]]
+  tipo: normal
+  verificado_en: "dl825-ley-iva art. 55: 'en el mismo período tributario en que la remuneración se perciba o se ponga ... a disposición del prestador'"
+
+- id: n14
+  pregunta: "Le hice un descuento a un cliente después de facturarle. ¿Qué documento tengo que emitir?"
+  documentos_esperados: [dl825-ley-iva]
+  hechos_clave: [["nota de crédito", "notas de crédito"]]
+  tipo: normal
+  verificado_en: "dl825-ley-iva art. 57: 'deberán emitir notas de crédito por los descuentos o bonificaciones otorgados con posterioridad a la facturación'"
+
+- id: n15
+  pregunta: "Me di cuenta de que cobré menos IVA del que correspondía en una factura. ¿Qué emito?"
+  documentos_esperados: [dl825-ley-iva]
+  hechos_clave: [["nota de débito", "notas de débito"]]
+  tipo: normal
+  verificado_en: "dl825-ley-iva art. 57: 'deberán emitir notas de débito por aumentos del impuesto facturado'"
+
+- id: n16
+  pregunta: "Emití una factura con un error. ¿Cómo la anulo?"
+  documentos_esperados: [sii-faq-fe-7335, sii-guia-anular-factura, sii-mipyme-anular-factura]
+  hechos_clave: [["nota de crédito"], ["anulación", "anula"]]
+  tipo: normal
+  verificado_en: "sii-faq-fe-7335: 'se deberá emitir una Nota de Crédito Electrónica, la cual deberá contener un campo que indique que se trata de una anulación'"
+
+- id: n17
+  pregunta: "¿Hasta cuándo puedo emitir la nota de crédito que anula una factura mía?"
+  documentos_esperados: [sii-faq-fe-7335]
+  hechos_clave: [["mismo período tributario", "mismo periodo tributario"], ["siguiente"]]
+  tipo: normal
+  verificado_en: "sii-faq-fe-7335: 'El Plazo de emisión ... es en el mismo período tributario o a más tardar en el siguiente'"
+
+- id: n18
+  pregunta: "¿Puedo anular tres facturas con una sola nota de crédito?"
+  documentos_esperados: [sii-faq-fe-7335]
+  hechos_clave: [["solamente a 1 documento", "un solo documento", "1 documento", "un documento"]]
+  tipo: normal
+  verificado_en: "sii-faq-fe-7335: 'La Nota de Crédito Electrónica de Anulación debe hacer referencia solamente a 1 documento'"
+
+- id: n19
+  pregunta: "Un cliente me devolvió mercadería que le vendí hace ocho meses. ¿Puedo rebajar mi débito fiscal con la nota de crédito?"
+  documentos_esperados: [sii-faq-fe-7335]
+  hechos_clave: [["6 meses", "seis meses"], ["no puede rebajar"]]
+  tipo: normal
+  verificado_en: "sii-faq-fe-7335: 'Si la nota de crédito se emite después de los 6 meses, el emisor no puede rebajar su debito fiscal'"
+
+- id: n20
+  pregunta: "Necesito anular una nota de crédito que emití. ¿Qué documento uso?"
+  documentos_esperados: [sii-faq-fe-7335]
+  hechos_clave: [["nota de débito"]]
+  tipo: normal
+  verificado_en: "sii-faq-fe-7335: 'Para anular una Nota de Crédito Electrónica (NCE), se deberá emitir una Nota de Débito Electrónica (NDE)'"
+
+- id: n21
+  pregunta: "Se me pasó el plazo para anular una factura con nota de crédito. ¿Cómo recupero el débito fiscal que ya pagué?"
+  documentos_esperados: [sii-faq-fe-7335]
+  hechos_clave: [["petición administrativa", "2117"]]
+  tipo: normal
+  verificado_en: "sii-faq-fe-7335: 'deberá solicitarlo vía petición administrativa (formulario 2117) de acuerdo al Artículo 126° del Código Tributario'"
+
+- id: n22
+  pregunta: "En el sistema de facturación gratuito del SII, ¿qué botón uso para anular una factura?"
+  documentos_esperados: [sii-guia-anular-factura, sii-mipyme-anular-factura]
+  hechos_clave: [["Nota de Crédito de Anulación", "Nota de Crédito para Anulación"]]
+  tipo: normal
+  verificado_en: "sii-guia-anular-factura paso 4: 'debe seleccionar \"Generar Nota de Crédito de Anulación\"'"
+
+- id: n23
+  pregunta: "¿Qué es el Registro de Compras y Ventas del SII?"
+  documentos_esperados: [sii-faq-fe-6971, sii-rcv-faqs]
+  hechos_clave: [["Registro de Compras"], ["Registro de Ventas"]]
+  tipo: normal
+  verificado_en: "sii-faq-fe-6971: 'compuesto por 2 registros, un Registro de Compras (RC) y otro Registro de Ventas (RV)'"
+
+- id: n24
+  pregunta: "En mi registro de compras aparecen secciones distintas. ¿Qué significa cada una?"
+  documentos_esperados: [sii-faq-fe-6972, sii-rcv-faqs]
+  hechos_clave: [["Pendiente"], ["Reclamados"], ["No incluir"]]
+  tipo: normal
+  verificado_en: "sii-faq-fe-6972: 4 secciones: Registro, Pendiente, Reclamados, No incluir"
+
+- id: n25
+  pregunta: "¿Tengo que firmar electrónicamente el Registro de Compras y Ventas?"
+  documentos_esperados: [sii-rcv-faqs]
+  hechos_clave: [["no se debe firmar", "no es necesario firmar", "no, no se debe"]]
+  tipo: normal
+  verificado_en: "sii-rcv-faqs P5: 'No, no se debe firmar el Registro de Compras y Ventas'"
+
+- id: n26
+  pregunta: "¿Todavía tengo que llevar libro de compras y ventas?"
+  documentos_esperados: [sii-rcv-faqs]
+  hechos_clave: [["reemplaza"]]
+  tipo: normal
+  verificado_en: "sii-rcv-faqs P9: 'este nuevo Registro reemplaza la obligación de llevar el Libro de Compras y Ventas'"
+
+- id: n27
+  pregunta: "Un proveedor dice que me mandó una factura, pero no aparece en el SII. ¿Qué hago?"
+  documentos_esperados: [sii-rcv-faqs]
+  hechos_clave: [["proveedor"], ["reenvío", "reenviar"]]
+  tipo: normal
+  verificado_en: "sii-rcv-faqs P15: 'Contactarse con el proveedor para verificar la situación y solicitar el reenvío'"
+
+- id: n28
+  pregunta: "¿Puedo agregar yo misma al registro una factura electrónica que el SII no recibió?"
+  documentos_esperados: [sii-rcv-faqs]
+  hechos_clave: [["no"], ["recibidos correctamente por el SII", "recibido por el SII", "recibidos por el SII"]]
+  tipo: normal
+  verificado_en: "sii-rcv-faqs P14: 'No, los documentos tributarios electrónicos válidos son solo aquellos que han sido recibidos correctamente por el SII'"
+
+- id: n29
+  pregunta: "Vendo con boleta electrónica. ¿Cómo llegan esas ventas al Registro de Compras y Ventas?"
+  documentos_esperados: [sii-faq-fe-7863]
+  hechos_clave: [["Resumen de Ventas Diarias"]]
+  tipo: normal
+  verificado_en: "sii-faq-fe-7863: 'cargada de forma automática ... con la información del Resumen de Ventas Diarias'"
+
+- id: n30
+  pregunta: "Somos una sociedad de profesionales que tributa en primera categoría. ¿Qué documento emitimos desde 2023?"
+  documentos_esperados: [sii-faq-iva-sociedades-profesionales]
+  hechos_clave: [["no afectas o exentas"]]
+  tipo: normal
+  verificado_en: "sii-faq-iva-sociedades-profesionales: 'deberán emitir facturas o boletas no afectas o exentas de IVA'"
+
+# --- Fuera del corpus: la respuesta correcta es decir que no hay información -----------------
+
+- id: f01
+  pregunta: "¿Cuál es la tasa del impuesto de primera categoría para una pyme?"
+  documentos_esperados: []
+  hechos_clave: []
+  tipo: fuera_del_corpus
+
+- id: f02
+  pregunta: "¿Cómo calculo las cotizaciones previsionales de mis trabajadores?"
+  documentos_esperados: []
+  hechos_clave: []
+  tipo: fuera_del_corpus
+
+- id: f03
+  pregunta: "¿Cuándo vence la declaración anual de renta?"
+  documentos_esperados: []
+  hechos_clave: []
+  tipo: fuera_del_corpus
+
+- id: f04
+  pregunta: "¿Cuánto tengo que pagar de contribuciones por la oficina?"
+  documentos_esperados: []
+  hechos_clave: []
+  tipo: fuera_del_corpus
+
+- id: f05
+  pregunta: "¿Cómo se calcula el finiquito de un trabajador?"
+  documentos_esperados: []
+  hechos_clave: []
+  tipo: fuera_del_corpus

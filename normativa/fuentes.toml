@@ -1,0 +1,126 @@
+# Corpus de normativa del agente (fase 2). SOLO fuentes oficiales: SII y textos legales.
+# Alcance: IVA y documentos tributarios electrónicos (factura, notas, acuse de recibo, RCV).
+# Fuera de alcance a propósito: renta, remuneraciones, otros impuestos (sirven para probar "no sé").
+#
+# Descargar / actualizar:  uv run python -m normativa.descargar
+# Cada fuente se guarda en normativa/docs/<id>.md con su URL, fecha de descarga y hash.
+
+[[fuente]]
+id = "dl825-ley-iva"
+titulo = "Decreto Ley N° 825, Ley sobre Impuesto a las Ventas y Servicios"
+tipo = "ley"
+url = "https://www.sii.cl/normativa_legislacion/sobreventasyservicios.pdf"
+
+[[fuente]]
+id = "ley-19983"
+titulo = "Ley N° 19.983, regula la transferencia y otorga mérito ejecutivo a copia de la factura"
+tipo = "ley"
+url = "https://www.sii.cl/factura_electronica/ley19983.pdf"
+
+[[fuente]]
+id = "sii-uso-credito-fiscal"
+titulo = "SII: Cuándo corresponde el uso de crédito fiscal"
+tipo = "guia"
+url = "https://www.sii.cl/destacados/f29/usocreditofiscal.htm"
+
+[[fuente]]
+id = "sii-guia-anular-factura"
+titulo = "SII: Cómo anular una factura o nota de débito electrónica (nota de crédito)"
+tipo = "guia"
+url = "https://www.sii.cl/destacados/factura_electronica/guias_ayuda/nota_credito_anular_fe.pdf"
+
+[[fuente]]
+id = "sii-mipyme-anular-factura"
+titulo = "SII Mipyme: Paso a paso para emitir una nota de crédito que anula una factura"
+tipo = "guia"
+url = "https://www.sii.cl/portales/mipyme/emision_documentos/Anular_Fact.html"
+
+[[fuente]]
+id = "sii-rcv-faqs"
+titulo = "SII: Preguntas frecuentes del Registro de Compras y Ventas"
+tipo = "faq"
+url = "https://www.sii.cl/ayudas/ayudas_por_servicios/rcv_faqs.pdf"
+
+[[fuente]]
+id = "sii-faq-fe-6603"
+titulo = "SII FAQ: procedimientos para dar el acuse de recibo y tener derecho al crédito fiscal de una factura electrónica"
+tipo = "faq"
+url = "https://www.sii.cl/preguntas_frecuentes/factura_electronica/001_003_6603.htm"
+
+[[fuente]]
+id = "sii-faq-fe-6597"
+titulo = "SII FAQ: desde cuándo se exige el acuse de recibo para usar el crédito fiscal de una factura electrónica"
+tipo = "faq"
+url = "https://www.sii.cl/preguntas_frecuentes/factura_electronica/001_003_6597.htm"
+
+[[fuente]]
+id = "sii-faq-fe-6915"
+titulo = "SII FAQ: qué pasa si la factura electrónica es reclamada dentro del plazo de 8 días"
+tipo = "faq"
+url = "https://www.sii.cl/preguntas_frecuentes/factura_electronica/001_003_6915.htm"
+
+[[fuente]]
+id = "sii-faq-fe-6295"
+titulo = "SII FAQ: ¿se puede cambiar el estado de una factura electrónica ya reclamada?"
+tipo = "faq"
+url = "https://www.sii.cl/preguntas_frecuentes/factura_electronica/001_003_6295.htm"
+
+[[fuente]]
+id = "sii-faq-fe-7335"
+titulo = "SII FAQ: plazos para emitir notas de crédito y cómo anular documentos tributarios electrónicos"
+tipo = "faq"
+url = "https://www.sii.cl/preguntas_frecuentes/factura_electronica/001_003_7335.htm"
+
+[[fuente]]
+id = "sii-faq-fe-6971"
+titulo = "SII FAQ: ¿Qué es el Registro de Compras y Ventas (RCV)?"
+tipo = "faq"
+url = "https://www.sii.cl/preguntas_frecuentes/factura_electronica/001_003_6971.htm"
+
+[[fuente]]
+id = "sii-faq-fe-6972"
+titulo = "SII FAQ: ¿Qué es el Registro de Compras (RC)?"
+tipo = "faq"
+url = "https://www.sii.cl/preguntas_frecuentes/factura_electronica/001_003_6972.htm"
+
+[[fuente]]
+id = "sii-faq-fe-7201"
+titulo = "SII FAQ: ¿el Registro de Compras y Ventas acepta Solicitudes de Registro de Factura (SRF)?"
+tipo = "faq"
+url = "https://www.sii.cl/preguntas_frecuentes/factura_electronica/001_003_7201.htm"
+
+[[fuente]]
+id = "sii-faq-fe-6991"
+titulo = "SII FAQ: ¿es obligatorio complementar el Registro de Compras y Ventas?"
+tipo = "faq"
+url = "https://www.sii.cl/preguntas_frecuentes/factura_electronica/001_003_6991.htm"
+
+[[fuente]]
+id = "sii-faq-fe-6976"
+titulo = "SII FAQ: en qué período el Registro de Compras considera las facturas según el acuse de recibo"
+tipo = "faq"
+url = "https://www.sii.cl/preguntas_frecuentes/factura_electronica/001_003_6976.htm"
+
+[[fuente]]
+id = "sii-faq-fe-7369"
+titulo = "SII FAQ: cómo ingresar en el Registro de Compras una Solicitud de Registro de Factura (SRF)"
+tipo = "faq"
+url = "https://www.sii.cl/preguntas_frecuentes/factura_electronica/001_003_7369.htm"
+
+[[fuente]]
+id = "sii-faq-fe-7863"
+titulo = "SII FAQ: qué información de boletas electrónicas se registra en el Registro de Compras y Ventas"
+tipo = "faq"
+url = "https://www.sii.cl/preguntas_frecuentes/factura_electronica/001_003_7863.htm"
+
+[[fuente]]
+id = "sii-faq-impuestos-mensuales-0693"
+titulo = "SII FAQ: plazo para usar el crédito fiscal de una factura recibida con retraso"
+tipo = "faq"
+url = "https://www.sii.cl/preguntas_frecuentes/impuestos_mensuales/001_130_0693.htm"
+
+[[fuente]]
+id = "sii-faq-iva-sociedades-profesionales"
+titulo = "SII FAQ: documentos que deben emitir las sociedades de profesionales desde 2023"
+tipo = "faq"
+url = "https://www.sii.cl/preguntas_frecuentes/iva_servicios_profesionales/001_320_8300.htm"

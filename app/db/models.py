@@ -31,7 +31,10 @@ class Factura(SQLModel, table=True):
             "tipo_dte",
             "folio",
             unique=True,
+            # El WHERE se declara por motor: sin postgresql_where, Postgres crearía un índice
+            # único COMPLETO y rechazaría también los duplicados que van a revisión.
             sqlite_where=text("estado = 'registrada'"),
+            postgresql_where=text("estado = 'registrada'"),
         ),
     )
 

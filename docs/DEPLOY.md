@@ -56,5 +56,24 @@ En `https://api-dte.studioai.cl/docs`, botón **Authorize** → pega la API key 
 ## Notas
 
 - **Rama `main`:** producción se despliega desde `main`. Flujo: `feature/*` → PR a `develop` → cuando está estable, PR `develop` → `main`.
-- **SQLite:** suficiente para la demo (una sola instancia). Para producción real: Postgres (solo cambia `DATABASE_URL`).
+- **Base de datos:** en producción, Postgres 16 + pgvector (servicio `dte-postgres` en Dokploy, sin puerto externo). Ver la sección siguiente. Sin `DATABASE_URL`, la app usa SQLite en el volumen `dte_data`.
+
+## Postgres
+
+1. Dokploy → Database → PostgreSQL, imagen `pgvector/pgvector:pg16`, base `dte`, usuario `dte_app`, sin External Port.
+2. Activar pgvector (terminal del servicio):
+   ```bash
+   psql -U dte_app -d dte -c "CREATE EXTENSION IF NOT EXISTS vector;"
+   ```
+3. En el Environment del compose:
+   ```bash
+   DATABASE_URL=postgresql+psycopg://dte_app:<clave>@<app-name-de-la-base>:5432/dte
+   ```
+   El host es el **App Name** del servicio de base de datos (red interna `dokploy-network`).
+4. Deploy y recargar datos de demo: `cd /app && python -m samples.cargar --reset` (contenedor **api**).
+5. Verificar que el índice único es parcial (terminal de la base):
+   ```bash
+   psql -U dte_app -d dte -c "SELECT indexdef FROM pg_indexes WHERE indexname = 'uq_factura_registrada';"
+   ```
+   Debe terminar en `WHERE ((estado)::text = 'registrada'::text)`.
 - **Una sola API key:** para la demo, n8n y el revisor humano usan la misma. En producción serían keys separadas con permisos distintos (ingesta vs. revisión).

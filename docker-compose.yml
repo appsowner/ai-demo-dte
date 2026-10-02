@@ -7,7 +7,7 @@ services:
     build: .
     restart: unless-stopped
     environment:
-      DATABASE_URL: sqlite:////data/facturas.db
+      DATABASE_URL: ${DATABASE_URL:-sqlite:////data/facturas.db}
       API_KEY_SHA256: ${API_KEY_SHA256}
       LLM_PROVIDER: ${LLM_PROVIDER:-openrouter}
       LLM_MODEL: ${LLM_MODEL:-openai/gpt-4o-mini}
@@ -32,7 +32,7 @@ services:
     restart: unless-stopped
     command: ["python", "-m", "mcp_server.http_server", "--host", "0.0.0.0", "--port", "8001"]
     environment:
-      DATABASE_URL: sqlite:////data/facturas.db
+      DATABASE_URL: ${DATABASE_URL:-sqlite:////data/facturas.db}
       MCP_TOKEN_SHA256: ${MCP_TOKEN_SHA256}
     volumes:
       - dte_data:/data

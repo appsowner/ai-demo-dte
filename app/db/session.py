@@ -14,7 +14,20 @@ from sqlmodel import Session, SQLModel, create_engine
 DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./facturas.db")
 
 
+def normalizar_url(url: str) -> str:
+    """Usa siempre el driver psycopg (v3) para Postgres.
+
+    Dokploy y otras plataformas entregan 'postgresql://' o 'postgres://', que en
+    SQLAlchemy significa psycopg2: un driver que este proyecto no instala.
+    """
+    for prefijo in ("postgresql://", "postgres://"):
+        if url.startswith(prefijo):
+            return "postgresql+psycopg://" + url[len(prefijo):]
+    return url
+
+
 def crear_engine(url: str) -> Engine:
+    url = normalizar_url(url)
     if url.startswith("sqlite"):
         # FastAPI atiende requests en varios threads: la conexión SQLite debe poder cruzarlos.
         return create_engine(url, connect_args={"check_same_thread": False})
